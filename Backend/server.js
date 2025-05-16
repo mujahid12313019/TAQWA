@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
+const joi=require('joi')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const passport=require('passport')
@@ -41,6 +42,10 @@ const UserSchema=mongoose.Schema({
         type:String,
         required:true
     }
+})
+const joiValidation=joi.object({
+    username:joi.string().min(3).max(20).required(),
+    password:joi.string().min(8).required()
 })
 
 const mongooseModel = mongoose.model("blog", mongooseSchema);
@@ -94,6 +99,7 @@ app.post("/add", async (req, res) => {
             content: content,
             author: author
         });
+       
         await newBlog.save();
         res.status(201).json({ message: "Blog post added successfully" });
     } catch (error) {
@@ -123,11 +129,13 @@ app.delete("/delete/:id",async (req,res)=>{
     const id=req.params.id
     try {
         const data=await mongooseModel.findByIdAndDelete({_id:id})
+       
     } catch (error) {
         console.log(error)
     }
 })
 app.post('/login',async (req,res)=>{
+    const username=req.body.username
     const user=await UserModel.findOne({username:req.body.username})
     if(!user){
         return res.status(401).send({
@@ -148,11 +156,17 @@ app.post('/login',async (req,res)=>{
     const token=jwt.sign(payload, process.env.SECRET_KEY, {
         expiresIn:"2d",
     })
-    return res.status(201).json({token})
+    return res.status(201).json({token,username})
     })
 app.post("/signup", async (req, res) => {
 
     const { username, password } = req.body;
+    const {error}=joiValidation.validate(req.body)
+        if(error){
+            console.log("error:",error.details[0].message)
+           return res.status(404).json({error:error.details[0].message})
+           
+        }
     
     try {
         // Check if user already exists,
@@ -166,6 +180,7 @@ app.post("/signup", async (req, res) => {
                 username: username,
                 password: hash
             });
+    
             await newUser.save();
             res.status(201).json("User is created successfully");
         });
@@ -182,8 +197,30 @@ app.get('/blog',authMiddleware,(req,res)=>{
         message:`Welcome back ${req.user.username}`
     })
 })
+app.put('/edit/:id',async (req,res)=>{
+    const id=req.params.id
+    const updated=req.body
+    console.log(updated)
+    try {
+        const editedblog=await mongooseModel.findByIdAndUpdate(
+        id,
+        updated,
+        {new:true}
+        
+        
+    )
+    console.log("edited",editedblog)
+    if(!editedblog){
+        return res.status(404).json({message:"Blog post not found"})
+    }
+    res.status(200).json({message:"Blog post updated Successfully"})
+    } catch (error) {
+        res.status(500).json({message:'Internarl server error',error})
+    }
+   
+    
+})
 
-  
 app.listen(port, async () => {
     console.log(`Server is running at http://localhost:${port}`);
     await connectDB();

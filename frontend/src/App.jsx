@@ -1,7 +1,10 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import { useParams } from "react-router-dom";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// Correct import:
+// Should be:
+import { faCopyright, faRetweet } from '@fortawesome/free-solid-svg-icons';
 function App() {
 const [blogs, setBlogs] = useState([]);
 
@@ -39,7 +42,7 @@ function Blog({blog,setBlog}){
  
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
+ 
   const [updateindex, setUpdateindex] = useState(null);
   const [updatedBlog, setUpdatedBlog] = useState(null);
  
@@ -56,16 +59,19 @@ function Blog({blog,setBlog}){
       .then((res) => {
         if (res.status !== 200) {
            localStorage.removeItem('token')
+           localStorage.removeItem('username')
         }
       
       })
       .catch((err) =>{
         console.error("Auth check failed:", err)
         localStorage.removeItem('token')
+        localStorage.removeItem('username')
       } )
   }, []);
   return(
-    <div>
+    <div className="blog-list">
+      <p>Welcome back,{localStorage.getItem('username')}</p>
               <input
                 type="text"
                 placeholder="Title"
@@ -76,13 +82,10 @@ function Blog({blog,setBlog}){
                 placeholder="Content"
                 onChange={(e) => setContent(e.target.value)}
               />
-              <input
-                type="text"
-                placeholder="Author"
-                onChange={(e) => setAuthor(e.target.value)}
-              />
+              
               <button onClick={()=>{
                 localStorage.removeItem("token")
+                localStorage.removeItem('username')
                 window.location.href='/login'
               }}>Logout</button>
               <button
@@ -95,7 +98,7 @@ function Blog({blog,setBlog}){
                     body: JSON.stringify({
                       title: title,
                       content: content,
-                      author: author,
+                      author: localStorage.getItem('username'),
                     }),
                   });
 
@@ -130,14 +133,7 @@ function Blog({blog,setBlog}){
                             setUpdatedBlog({ ...item, content: e.target.value })
                           }
                         />
-                        <input
-                          type="text"
-                          placeholder="Author"
-                          value={updatedBlog?.author || item.author}
-                          onChange={(e) =>
-                            setUpdatedBlog({ ...item, author: e.target.value })
-                          }
-                        />
+                        
                         <button
                           onClick={async () => {
                             const response = await fetch(
@@ -169,7 +165,9 @@ function Blog({blog,setBlog}){
                         <Link to={`/posts/${item._id}`}>Read More</Link>
                         <p>Author: {item.author}</p>
                         <p>Date: {new Date(item.date).toLocaleString()}</p>
-                        <button
+                        {localStorage.getItem('username')==item.author?(
+                          <div>
+                         <button
                           onClick={async () => {
                             const response = await fetch(
                               `http://localhost:3000/delete/${item._id}`,
@@ -195,6 +193,11 @@ function Blog({blog,setBlog}){
                         >
                           Edit
                         </button>
+                        </div>
+                        ):(
+                         <p></p>
+                        )}
+                        
                       </div>
                     )}
                   </div>
@@ -231,17 +234,21 @@ function SinglePost() {
 }
 function Home(){
   return(
-    <div>
-<h1>Welcome to Daily Islam</h1><br/>
+    <div className="homepage">
+<h1 id="Header">Welcome to Daily Islam</h1><br/>
 <Link to='/login'>Login</Link><br/>
 Don't Have a account?<br/>
-<Link to='/signup'>Sign Up</Link>
+<Link to='/signup'>Sign Up</Link><br/>
+ <img src="../copyright-solid.svg" height={20}/>
+ By Mujahid Hossen Sagar
+ <br/>
+ 
     </div>
     
   )
 }
 function Login() {
-  const [username, setUsername] = useState("akhi");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   useEffect(() => {
@@ -268,7 +275,7 @@ function Login() {
   }, []);
 
   return (
-    <div>
+    <div className="loginpage">
       
       Username: <input type="text" onChange={(e) => setUsername(e.target.value)} /><br />
       Password: <input type="password" onChange={(e) => setPassword(e.target.value)} /><br />
@@ -288,6 +295,7 @@ function Login() {
          
           if (res.status === 201) {
             localStorage.setItem('token',data.token)
+            localStorage.setItem('username',username)
             window.location.href = "/blog";
             alert('Login successful')
           } else {
@@ -306,9 +314,9 @@ function Login() {
 function SignUp(){
    const [username,setUsername]=useState("")
   const [password,setPassword]=useState("")
-
+  const [error,setError]=useState("")
   return(
-    <div>
+    <div className="signup">
       Username:
       <input type="text" placeholder="Username" onChange={(e)=>setUsername(e.target.value)}/><br/>
       Password:<input type="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)}/><br/>
@@ -327,11 +335,16 @@ function SignUp(){
                   window.location.href='/login'
                   
                 }
+                else if(res.status===404){
+                  const data=await res.json()
+                  setError(data.error)
+                }
 
       }
       
      
       }>Sign Up</button>
+      <p>{error}</p>
     </div>
   )
 }

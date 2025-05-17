@@ -180,6 +180,7 @@ function Blog({blog,setBlog}){
                                 "http://localhost:3000/get"
                               ).then((res) => res.json());
                               setBlog(updatedBlogs);
+                              <Blog/>
                             }
                           }}
                         >

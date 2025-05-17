@@ -9,7 +9,7 @@ function App() {
 const [blogs, setBlogs] = useState([]);
 
 useEffect(() => {
-  fetch("http://localhost:3000/get")
+  fetch("https://tawqabackend.onrender.com/get")
     .then((res) => res.json())
     .then((data) => {
       console.log("Fetched blogs:", data);
@@ -50,7 +50,7 @@ function Blog({blog,setBlog}){
     const token=localStorage.getItem('token')
     if(!token) return  window.location.href = "/login";
 
-    fetch("http://localhost:3000/blog", { 
+    fetch("https://tawqabackend.onrender.com/blog", { 
       method: "GET",
       headers:{
         Authorization:`Bearer ${token}`
@@ -137,7 +137,7 @@ function Blog({blog,setBlog}){
                         <button
                           onClick={async () => {
                             const response = await fetch(
-                              `http://localhost:3000/edit/${item._id}`,
+                              `https://tawqabackend.onrender.com/edit/${item._id}`,
                               {
                                 method: "PUT",
                                 headers: {
@@ -170,7 +170,7 @@ function Blog({blog,setBlog}){
                          <button
                           onClick={async () => {
                             const response = await fetch(
-                              `http://localhost:3000/delete/${item._id}`,
+                              `https://tawqabackend.onrender.com/delete/${item._id}`,
                               {
                                 method: "DELETE",
                               }
@@ -212,7 +212,7 @@ function SinglePost() {
   const { id } = useParams();
 
   useEffect(() => {
-    fetch(`http://localhost:3000/get/${id}`)
+    fetch(`https://tawqabackend.onrender.com/get/${id}`)
       .then((res) => res.json())
       .then((data) => {
         console.log("Fetched post:", data); // Debugging
@@ -321,7 +321,7 @@ function SignUp(){
       <input type="text" placeholder="Username" onChange={(e)=>setUsername(e.target.value)}/><br/>
       Password:<input type="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)}/><br/>
       <button onClick={async ()=>{
-        const res=  await fetch("http://localhost:3000/signup", {
+        const res=  await fetch("https://tawqabackend.onrender.com/signup", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",

@@ -1,4 +1,6 @@
 import "./App.css";
+import { useNavigate } from 'react-router-dom';
+
 import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -45,10 +47,10 @@ function Blog({blog,setBlog}){
  
   const [updateindex, setUpdateindex] = useState(null);
   const [updatedBlog, setUpdatedBlog] = useState(null);
- 
+     const navigate = useNavigate()
     useEffect(() => {
     const token=localStorage.getItem('token')
-    if(!token) return  window.location.href = "/login";
+    if(!token) return  navigate("/login");
 
     fetch("http://localhost:3000/blog", { 
       method: "GET",
@@ -86,7 +88,7 @@ function Blog({blog,setBlog}){
               <button onClick={()=>{
                 localStorage.removeItem("token")
                 localStorage.removeItem('username')
-                window.location.href='/login'
+                navigate('/login');
               }}>Logout</button>
               <button
                 onClick={async () => {
@@ -180,7 +182,145 @@ function Blog({blog,setBlog}){
                                 "http://localhost:3000/get"
                               ).then((res) => res.json());
                               setBlog(updatedBlogs);
-                              <Blog/>
+                              return(
+                                <div className="blog-list">
+      <p>Welcome back,{localStorage.getItem('username')}</p>
+              <input
+                type="text"
+                placeholder="Title"
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Content"
+                onChange={(e) => setContent(e.target.value)}
+              />
+              
+              <button onClick={()=>{
+                localStorage.removeItem("token")
+                localStorage.removeItem('username')
+                navigate('/login');
+              }}>Logout</button>
+              <button
+                onClick={async () => {
+                  const response = await fetch("http://localhost:3000/add", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      title: title,
+                      content: content,
+                      author: localStorage.getItem('username'),
+                    }),
+                  });
+
+                  if (response.ok) {
+                    const updatedBlogs = await fetch(
+                      "http://localhost:3000/get"
+                    ).then((res) => res.json());
+                    setBlog(updatedBlogs);
+                  }
+                }}
+              >
+                Send Data
+              </button>
+              {blog.map((item, index) => {
+                return (
+                  <div key={index}>
+                    {updateindex === index ? (
+                      <div>
+                        <input
+                          type="text"
+                          placeholder="Title"
+                          value={updatedBlog?.title || item.title}
+                          onChange={(e) =>
+                            setUpdatedBlog({ ...item, title: e.target.value })
+                          }
+                        />
+                        <input
+                          type="text"
+                          placeholder="Content"
+                          value={updatedBlog?.content || item.content}
+                          onChange={(e) =>
+                            setUpdatedBlog({ ...item, content: e.target.value })
+                          }
+                        />
+                        
+                        <button
+                          onClick={async () => {
+                            const response = await fetch(
+                              `http://localhost:3000/edit/${item._id}`,
+                              {
+                                method: "PUT",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(updatedBlog),
+                              }
+                            );
+                            if (response.ok) {
+                              const updatedBlogs = await fetch(
+                                "http://localhost:3000/get"
+                              ).then((res) => res.json());
+                              setBlog(updatedBlogs);
+                              setUpdateindex(null);
+                            }
+                          }}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <h1>Title: {item.title}</h1>
+                        <p>Content: {item.content.slice(0, 100)}...</p>
+                        <Link to={`/posts/${item._id}`}>Read More</Link>
+                        <p>Author: {item.author}</p>
+                        <p>Date: {new Date(item.date).toLocaleString()}</p>
+                        {localStorage.getItem('username')==item.author?(
+                          <div>
+                         <button
+                          onClick={async () => {
+                            const response = await fetch(
+                              `http://localhost:3000/delete/${item._id}`,
+                              {
+                                method: "DELETE",
+                              }
+                            );
+                            if (response.ok) {
+                              const updatedBlogs = await fetch(
+                                "http://localhost:3000/get"
+                              ).then((res) => res.json());
+                              setBlog(updatedBlogs);
+                              
+                                
+                              
+                            }
+                          }}
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={() => {
+                            setUpdateindex(index);
+                            setUpdatedBlog(item);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        </div>
+                        ):(
+                         <p></p>
+                        )}
+                        
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+              </div>
+                              )
                             }
                           }}
                         >
@@ -236,11 +376,11 @@ function SinglePost() {
 function Home(){
   return(
     <div className="homepage">
-<h1 id="Header">Welcome to Daily Islam</h1><br/>
+<h1 id="Header">Welcome to TQWA</h1><br/>
 <Link to='/login'>Login</Link><br/>
 Don't Have a account?<br/>
 <Link to='/signup'>Sign Up</Link><br/>
- <img src="../copyright-solid.svg" height={20}/>
+ <FontAwesomeIcon icon={faCopyright} />
  By Mujahid Hossen Sagar
  <br/>
  
@@ -251,7 +391,7 @@ Don't Have a account?<br/>
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const navigate=useNavigate()
   useEffect(() => {
     const token=localStorage.getItem('token')
     if(!token) return;
@@ -263,7 +403,7 @@ function Login() {
     })
       .then((res) => {
         if (res.status === 200) {
-          window.location.href = "/blog";
+           navigate("/blog");
         }
         else {
           localStorage.removeItem('token')
@@ -297,7 +437,7 @@ function Login() {
           if (res.status === 201) {
             localStorage.setItem('token',data.token)
             localStorage.setItem('username',username)
-            window.location.href = "/blog";
+             navigate("/blog");
             alert('Login successful')
           } else {
             alert("Login failed. Please try again.");
@@ -313,6 +453,7 @@ function Login() {
 }
 
 function SignUp(){
+  const navigate=useNavigate();
    const [username,setUsername]=useState("")
   const [password,setPassword]=useState("")
   const [error,setError]=useState("")
@@ -333,7 +474,7 @@ function SignUp(){
                     }),
                   });
                 if(res.status==201){
-                  window.location.href='/login'
+                  navigate('/login');
                   
                 }
                 else if(res.status===404){

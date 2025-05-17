@@ -7,11 +7,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // Correct import:
 // Should be:
 import { faCopyright, faRetweet } from '@fortawesome/free-solid-svg-icons';
+
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 function App() {
 const [blogs, setBlogs] = useState([]);
 
 useEffect(() => {
-  fetch("http://localhost:3000/get")
+  fetch("https://taqwabackend.onrender.com/get")
     .then((res) => res.json())
     .then((data) => {
       console.log("Fetched blogs:", data);
@@ -37,8 +40,6 @@ useEffect(() => {
     </Router>
   );
 }
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
  
 function Blog({blog,setBlog}){
  
@@ -52,7 +53,7 @@ function Blog({blog,setBlog}){
     const token=localStorage.getItem('token')
     if(!token) return  navigate("/login");
 
-    fetch("http://localhost:3000/blog", { 
+    fetch("https://taqwabackend.onrender.com/blog", { 
       method: "GET",
       headers:{
         Authorization:`Bearer ${token}`
@@ -92,7 +93,7 @@ function Blog({blog,setBlog}){
               }}>Logout</button>
               <button
                 onClick={async () => {
-                  const response = await fetch("http://localhost:3000/add", {
+                  const response = await fetch("https://taqwabackend.onrender.com/add", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -106,7 +107,7 @@ function Blog({blog,setBlog}){
 
                   if (response.ok) {
                     const updatedBlogs = await fetch(
-                      "http://localhost:3000/get"
+                      "https://taqwabackend.onrender.com/get"
                     ).then((res) => res.json());
                     setBlog(updatedBlogs);
                   }
@@ -139,7 +140,7 @@ function Blog({blog,setBlog}){
                         <button
                           onClick={async () => {
                             const response = await fetch(
-                              `http://localhost:3000/edit/${item._id}`,
+                              `https://taqwabackend.onrender.com/edit/${item._id}`,
                               {
                                 method: "PUT",
                                 headers: {
@@ -150,7 +151,7 @@ function Blog({blog,setBlog}){
                             );
                             if (response.ok) {
                               const updatedBlogs = await fetch(
-                                "http://localhost:3000/get"
+                                "https://taqwabackend.onrender.com/get"
                               ).then((res) => res.json());
                               setBlog(updatedBlogs);
                               setUpdateindex(null);
@@ -172,7 +173,7 @@ function Blog({blog,setBlog}){
                          <button
                           onClick={async () => {
                             const response = await fetch(
-                              `http://localhost:3000/delete/${item._id}`,
+                              `https://taqwabackend.onrender.com/delete/${item._id}`,
                               {
                                 method: "DELETE",
                               }
@@ -203,7 +204,7 @@ function Blog({blog,setBlog}){
               }}>Logout</button>
               <button
                 onClick={async () => {
-                  const response = await fetch("http://localhost:3000/add", {
+                  const response = await fetch("https://taqwabackend.onrender.com/add", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -217,7 +218,7 @@ function Blog({blog,setBlog}){
 
                   if (response.ok) {
                     const updatedBlogs = await fetch(
-                      "http://localhost:3000/get"
+                      "https://taqwabackend.onrender.com/get"
                     ).then((res) => res.json());
                     setBlog(updatedBlogs);
                   }
@@ -250,7 +251,7 @@ function Blog({blog,setBlog}){
                         <button
                           onClick={async () => {
                             const response = await fetch(
-                              `http://localhost:3000/edit/${item._id}`,
+                              `https://taqwabackend.onrender.com/edit/${item._id}`,
                               {
                                 method: "PUT",
                                 headers: {
@@ -261,7 +262,7 @@ function Blog({blog,setBlog}){
                             );
                             if (response.ok) {
                               const updatedBlogs = await fetch(
-                                "http://localhost:3000/get"
+                                "https://taqwabackend.onrender.com/get"
                               ).then((res) => res.json());
                               setBlog(updatedBlogs);
                               setUpdateindex(null);
@@ -283,14 +284,14 @@ function Blog({blog,setBlog}){
                          <button
                           onClick={async () => {
                             const response = await fetch(
-                              `http://localhost:3000/delete/${item._id}`,
+                              `https://taqwabackend.onrender.com/delete/${item._id}`,
                               {
                                 method: "DELETE",
                               }
                             );
                             if (response.ok) {
                               const updatedBlogs = await fetch(
-                                "http://localhost:3000/get"
+                                "https://taqwabackend.onrender.com/get"
                               ).then((res) => res.json());
                               setBlog(updatedBlogs);
                               
@@ -353,7 +354,7 @@ function SinglePost() {
   const { id } = useParams();
 
   useEffect(() => {
-    fetch(`http://localhost:3000/get/${id}`)
+    fetch(`https://taqwabackend.onrender.com/get/${id}`)
       .then((res) => res.json())
       .then((data) => {
         console.log("Fetched post:", data); // Debugging
@@ -376,7 +377,7 @@ function SinglePost() {
 function Home(){
   return(
     <div className="homepage">
-<h1 id="Header">Welcome to TQWA</h1><br/>
+<h1 id="Header">Welcome to TAQWA</h1><br/>
 <Link to='/login'>Login</Link><br/>
 Don't Have a account?<br/>
 <Link to='/signup'>Sign Up</Link><br/>
@@ -395,7 +396,7 @@ function Login() {
   useEffect(() => {
     const token=localStorage.getItem('token')
     if(!token) return;
-    fetch("http://localhost:3000/blog", { 
+    fetch("https://taqwabackend.onrender.com/blog", { 
       method: "GET",
       headers:{
         Authorization:`Bearer ${token}`
@@ -422,7 +423,7 @@ function Login() {
       Password: <input type="password" onChange={(e) => setPassword(e.target.value)} /><br />
       <button
         onClick={async () => {
-          const res = await fetch("http://localhost:3000/login", {
+          const res = await fetch("https://taqwabackend.onrender.com/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -463,7 +464,7 @@ function SignUp(){
       <input type="text" placeholder="Username" onChange={(e)=>setUsername(e.target.value)}/><br/>
       Password:<input type="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)}/><br/>
       <button onClick={async ()=>{
-        const res=  await fetch("http://localhost:3000/signup", {
+        const res=  await fetch("https://taqwabackend.onrender.com/signup", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",

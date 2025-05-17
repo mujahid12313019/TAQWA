@@ -90,7 +90,7 @@ function Blog({blog,setBlog}){
               }}>Logout</button>
               <button
                 onClick={async () => {
-                  const response = await fetch("http://localhost:3000/add", {
+                  const response = await fetch("/add", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -104,7 +104,7 @@ function Blog({blog,setBlog}){
 
                   if (response.ok) {
                     const updatedBlogs = await fetch(
-                      "http://localhost:3000/get"
+                      "https://tawqabackend.onrender.com/get"
                     ).then((res) => res.json());
                     setBlog(updatedBlogs);
                   }
@@ -148,7 +148,7 @@ function Blog({blog,setBlog}){
                             );
                             if (response.ok) {
                               const updatedBlogs = await fetch(
-                                "http://localhost:3000/get"
+                                "https://tawqabackend.onrender.com/get"
                               ).then((res) => res.json());
                               setBlog(updatedBlogs);
                               setUpdateindex(null);
@@ -177,7 +177,7 @@ function Blog({blog,setBlog}){
                             );
                             if (response.ok) {
                               const updatedBlogs = await fetch(
-                                "http://localhost:3000/get"
+                                "https://tawqabackend.onrender.com/get"
                               ).then((res) => res.json());
                               setBlog(updatedBlogs);
                             }
@@ -254,7 +254,7 @@ function Login() {
   useEffect(() => {
     const token=localStorage.getItem('token')
     if(!token) return;
-    fetch("http://localhost:3000/blog", { 
+    fetch("https://tawqabackend.onrender.com/blog", { 
       method: "GET",
       headers:{
         Authorization:`Bearer ${token}`
@@ -281,7 +281,7 @@ function Login() {
       Password: <input type="password" onChange={(e) => setPassword(e.target.value)} /><br />
       <button
         onClick={async () => {
-          const res = await fetch("http://localhost:3000/login", {
+          const res = await fetch("https://tawqabackend.onrender.com/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

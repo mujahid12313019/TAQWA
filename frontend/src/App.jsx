@@ -72,24 +72,20 @@ function Blog({blog,setBlog}){
       } )
   }, []);
   return(
-    <div className="blog-list">
+    <div >
       <p>Welcome back,{localStorage.getItem('username')}</p>
               <input
                 type="text"
                 placeholder="Title"
                 onChange={(e) => setTitle(e.target.value)}
-              />
+              id="title"/>
               <input
                 type="text"
                 placeholder="Content"
                 onChange={(e) => setContent(e.target.value)}
-              />
+              id="content"/>
               
-              <button onClick={()=>{
-                localStorage.removeItem("token")
-                localStorage.removeItem('username')
-                navigate('/login');
-              }}>Logout</button>
+              
               <button
                 onClick={async () => {
                   const response = await fetch("http://localhost:3000/add", {
@@ -111,9 +107,15 @@ function Blog({blog,setBlog}){
                     setBlog(updatedBlogs);
                   }
                 }}
-              >
+              id='send button'>
                 Send Data
               </button>
+              <button onClick={()=>{
+                localStorage.removeItem("token")
+                localStorage.removeItem('username')
+                navigate('/login');
+              }} id="logout">Logout</button>
+              <div id="blogging_map">
               {blog.map((item, index) => {
                 return (
                   <div key={index}>
@@ -196,11 +198,7 @@ function Blog({blog,setBlog}){
                 onChange={(e) => setContent(e.target.value)}
               />
               
-              <button onClick={()=>{
-                localStorage.removeItem("token")
-                localStorage.removeItem('username')
-                navigate('/login');
-              }}>Logout</button>
+              
               <button
                 onClick={async () => {
                   const response = await fetch("http://localhost:3000/add", {
@@ -225,6 +223,7 @@ function Blog({blog,setBlog}){
               >
                 Send Data
               </button>
+              
               {blog.map((item, index) => {
                 return (
                   <div key={index}>
@@ -344,6 +343,8 @@ function Blog({blog,setBlog}){
                   </div>
                 );
               })}
+              </div>
+              
             </div>
           
   )
@@ -365,7 +366,7 @@ function SinglePost() {
   if (!post) return <div>Loading...</div>;
 
   return (
-    <div>
+    <div className="homepage">
       <h1>Title: {post.title}</h1>
       <p>Content: {post.content}</p>
       <p>Author: {post.author}</p>
@@ -376,7 +377,7 @@ function SinglePost() {
 function Home(){
   return(
     <div className="homepage">
-<h1 id="Header">Welcome to TQWA</h1><br/>
+<h1 id="Header">Welcome to TAQWA</h1><br/>
 <Link to='/login'>Login</Link><br/>
 Don't Have a account?<br/>
 <Link to='/signup'>Sign Up</Link><br/>
@@ -416,7 +417,7 @@ function Login() {
   }, []);
 
   return (
-    <div className="loginpage">
+    <div className="homepage">
       
       Username: <input type="text" onChange={(e) => setUsername(e.target.value)} /><br />
       Password: <input type="password" onChange={(e) => setPassword(e.target.value)} /><br />
@@ -458,7 +459,7 @@ function SignUp(){
   const [password,setPassword]=useState("")
   const [error,setError]=useState("")
   return(
-    <div className="signup">
+    <div className="homepage">
       Username:
       <input type="text" placeholder="Username" onChange={(e)=>setUsername(e.target.value)}/><br/>
       Password:<input type="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)}/><br/>

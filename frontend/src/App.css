@@ -94,13 +94,22 @@ p {
     max-width: 95vw;
   }
 }
-.loginpage{
-  min-width: 100vw;
-  min-height: 100vh;
-  background-color: #3BCC5F;
-}
-.signup{
+#title{
   width: 100vw;
-  height: 100vh;
-  background-color: #FCDC4D;
+}
+#content{
+  width: 100vw;
+}
+#send{
+  align-self: flex-start;
+}
+#logout{
+  align-self: flex-start;
+}
+#blogging_map{
+  
+  text-align: left;
+}
+#button{
+  border-radius: 10%;
 }

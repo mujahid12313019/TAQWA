@@ -1,4 +1,6 @@
 import "./App.css";
+import { useNavigate } from 'react-router-dom';
+
 import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -45,10 +47,10 @@ function Blog({blog,setBlog}){
  
   const [updateindex, setUpdateindex] = useState(null);
   const [updatedBlog, setUpdatedBlog] = useState(null);
- 
+     const navigate = useNavigate()
     useEffect(() => {
     const token=localStorage.getItem('token')
-    if(!token) return  window.location.href = "/login";
+    if(!token) return  navigate("/login");
 
     fetch("https://tawqabackend.onrender.com/blog", { 
       method: "GET",
@@ -86,11 +88,11 @@ function Blog({blog,setBlog}){
               <button onClick={()=>{
                 localStorage.removeItem("token")
                 localStorage.removeItem('username')
-                window.location.href='/login'
+                navigate('/login');
               }}>Logout</button>
               <button
                 onClick={async () => {
-                  const response = await fetch("/add", {
+                  const response = await fetch("https://tawqabackend.onrender.com/add", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -250,7 +252,7 @@ Don't Have a account?<br/>
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const navigate=useNavigate()
   useEffect(() => {
     const token=localStorage.getItem('token')
     if(!token) return;
@@ -262,7 +264,7 @@ function Login() {
     })
       .then((res) => {
         if (res.status === 200) {
-          window.location.href = "/blog";
+           navigate("/blog");
         }
         else {
           localStorage.removeItem('token')
@@ -296,7 +298,7 @@ function Login() {
           if (res.status === 201) {
             localStorage.setItem('token',data.token)
             localStorage.setItem('username',username)
-            window.location.href = "/blog";
+             navigate("/blog");
             alert('Login successful')
           } else {
             alert("Login failed. Please try again.");
@@ -312,6 +314,7 @@ function Login() {
 }
 
 function SignUp(){
+  const navigate=useNavigate();
    const [username,setUsername]=useState("")
   const [password,setPassword]=useState("")
   const [error,setError]=useState("")
@@ -332,7 +335,7 @@ function SignUp(){
                     }),
                   });
                 if(res.status==201){
-                  window.location.href='/login'
+                  navigate('/login');
                   
                 }
                 else if(res.status===404){
